@@ -175,9 +175,7 @@ where
         None => None,
         Some(fd) => {
             use crate::socket_transfer::{reconstruct_socket, reconstruct_transfer_socket, request_sockets};
-            #[cfg(not(target_env = "ohos"))]
-            use tokio::sync::mpsc::channel;
-            #[cfg(target_env = "ohos")]
+
             use napi_ohos::tokio::sync::mpsc::channel;
 
             let fd = reconstruct_socket(fd)?;
@@ -190,7 +188,7 @@ where
 
                     let socket = socket.clone();
                     let (tx, rx) = channel(SOCKETS_PER_REQUEST);
-                    tokio::spawn(async move {
+                    napi_ohos::tokio::spawn(async move {
                         loop {
                             let sockets =
                                 match request_sockets(socket.lock().await, SocketDomain::$domain, SOCKETS_PER_REQUEST as u32).await {
@@ -240,7 +238,7 @@ where
 
     loop {
         let virtual_dns = virtual_dns.clone();
-        let ip_stack_stream = tokio::select! {
+        let ip_stack_stream = napi_ohos::tokio::select! {
             _ = shutdown_token.cancelled() => {
                 hilog_info!("Shutdown received");
                 break;
@@ -266,7 +264,7 @@ where
                 };
                 let proxy_handler = mgr.new_proxy_handler(info, domain_name, false).await?;
                 let socket_queue = socket_queue.clone();
-                tokio::spawn(async move {
+                napi_ohos::tokio::spawn(async move {
                     if let Err(err) = handle_tcp_session(tcp, proxy_handler, socket_queue).await {
                         hilog_error!(format!("{} error \"{}\"", info, err));
                     }
@@ -288,7 +286,7 @@ where
                         info.protocol = IpProtocol::Tcp;
                         let proxy_handler = mgr.new_proxy_handler(info, None, false).await?;
                         let socket_queue = socket_queue.clone();
-                        tokio::spawn(async move {
+                        napi_ohos::tokio::spawn(async move {
                             if let Err(err) = handle_dns_over_tcp_session(udp, proxy_handler, socket_queue, ipv6_enabled).await {
                                 hilog_error!(format!("{} error \"{}\"", info, err));
                             }
@@ -297,7 +295,7 @@ where
                         continue;
                     }
                     if args.dns == ArgDns::Virtual {
-                        tokio::spawn(async move {
+                        napi_ohos::tokio::spawn(async move {
                             if let Some(virtual_dns) = virtual_dns {
                                 if let Err(err) = handle_virtual_dns_session(udp, virtual_dns).await {
                                     hilog_error!(format!("{} error \"{}\"", info, err));
@@ -319,7 +317,7 @@ where
                 match mgr.new_proxy_handler(info, domain_name, true).await {
                     Ok(proxy_handler) => {
                         let socket_queue = socket_queue.clone();
-                        tokio::spawn(async move {
+                        napi_ohos::tokio::spawn(async move {
                             let ty = args.proxy.proxy_type;
                             if let Err(err) = handle_udp_associate_session(udp, ty, proxy_handler, socket_queue, ipv6_enabled).await {
                                 hilog_info!(format!("Ending {} with \"{}\"", info, err));
@@ -367,10 +365,10 @@ async fn handle_virtual_dns_session(mut udp: IpStackUdpStream, dns: Arc<Mutex<Vi
     Ok(())
 }
 
-async fn copy_and_record_traffic<R, W>(reader: &mut R, writer: &mut W, is_tx: bool) -> tokio::io::Result<u64>
+async fn copy_and_record_traffic<R, W>(reader: &mut R, writer: &mut W, is_tx: bool) -> napi_ohos::tokio::io::Result<u64>
 where
-    R: tokio::io::AsyncRead + Unpin + ?Sized,
-    W: tokio::io::AsyncWrite + Unpin + ?Sized,
+    R: napi_ohos::tokio::io::AsyncRead + Unpin + ?Sized,
+    W: napi_ohos::tokio::io::AsyncWrite + Unpin + ?Sized,
 {
     let mut buf = vec![0; 8192];
     let mut total = 0;
@@ -410,10 +408,10 @@ async fn handle_tcp_session(
         return Err(e);
     }
 
-    let (mut t_rx, mut t_tx) = tokio::io::split(tcp_stack);
-    let (mut s_rx, mut s_tx) = tokio::io::split(server);
+    let (mut t_rx, mut t_tx) = napi_ohos::tokio::io::split(tcp_stack);
+    let (mut s_rx, mut s_tx) = napi_ohos::tokio::io::split(server);
 
-    let res = tokio::join!(
+    let res = napi_ohos::tokio::join!(
         async move {
             let r = copy_and_record_traffic(&mut t_rx, &mut s_tx, true).await;
             if let Err(err) = s_tx.shutdown().await {
@@ -471,7 +469,7 @@ async fn handle_udp_associate_session(
     let mut buf1 = [0_u8; 4096];
     let mut buf2 = [0_u8; 4096];
     loop {
-        tokio::select! {
+        napi_ohos::tokio::select! {
             len = udp_stack.read(&mut buf1) => {
                 let len = len?;
                 if len == 0 {
@@ -556,7 +554,7 @@ async fn handle_dns_over_tcp_session(
     let mut buf1 = [0_u8; 4096];
     let mut buf2 = [0_u8; 4096];
     loop {
-        tokio::select! {
+        napi_ohos::tokio::select! {
             len = udp_stack.read(&mut buf1) => {
                 let len = len?;
                 if len == 0 {
