@@ -40,6 +40,7 @@ unicase = "2"
 url = "2"
 napi-derive-ohos = { version = "1.0.0-beta.2", features = ["full"] }
 napi-ohos = {  version = "1.0.0-beta.2", features = ["full"] }
+ohos-hilog-binding = "0.0.3"
 
 [target.'cfg(target_os="linux")'.dependencies]
 serde = { version = "1", features = ["derive"] }
