@@ -1,4 +1,5 @@
-#![cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
+
+#![cfg(all(any(target_os = "windows", target_os = "macos", target_os = "linux"), not(target_env = "ohos")))]
 
 use crate::{
     args::{ArgDns, ArgProxy},
