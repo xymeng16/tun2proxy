@@ -255,7 +255,7 @@ where
                     hilog_warn!("Too many sessions that over {MAX_SESSIONS}, dropping new session");
                     continue;
                 }
-                hilog_debug!("Session count {}", TASK_COUNT.fetch_add(1, Relaxed) + 1);
+                hilog_debug!(format!("Session count {}", TASK_COUNT.fetch_add(1, Relaxed) + 1));
                 let info = SessionInfo::new(tcp.local_addr(), tcp.peer_addr(), IpProtocol::Tcp);
                 let domain_name = if let Some(virtual_dns) = &virtual_dns {
                     let mut virtual_dns = virtual_dns.lock().await;
@@ -270,7 +270,7 @@ where
                     if let Err(err) = handle_tcp_session(tcp, proxy_handler, socket_queue).await {
                         hilog_error!(format!("{} error \"{}\"", info, err));
                     }
-                    hilog_debug!("Session count {}", TASK_COUNT.fetch_sub(1, Relaxed) - 1);
+                    hilog_debug!(format!("Session count {}", TASK_COUNT.fetch_sub(1, Relaxed) - 1));
                 });
             }
             IpStackStream::Udp(udp) => {
@@ -278,7 +278,7 @@ where
                     hilog_warn!("Too many sessions that over {MAX_SESSIONS}, dropping new session");
                     continue;
                 }
-                hilog_debug!("Session count {}", TASK_COUNT.fetch_add(1, Relaxed) + 1);
+                hilog_debug!(format!("Session count {}", TASK_COUNT.fetch_add(1, Relaxed) + 1));
                 let mut info = SessionInfo::new(udp.local_addr(), udp.peer_addr(), IpProtocol::Udp);
                 if info.dst.port() == DNS_PORT {
                     if is_private_ip(info.dst.ip()) {
