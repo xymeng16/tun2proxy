@@ -30,7 +30,7 @@ pub use {
     traffic_status::{tun2proxy_set_traffic_status_callback, TrafficStatus},
 };
 
-#[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
+#[cfg(all(any(target_os = "windows", target_os = "macos", target_os = "linux"), not(target_env = "ohos")))]
 pub use desktop_api::desktop_run_async;
 
 #[cfg(any(target_os = "ios", target_os = "android"))]
