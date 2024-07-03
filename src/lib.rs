@@ -15,7 +15,14 @@ use std::{
     net::{IpAddr, SocketAddr},
     sync::Arc,
 };
+#[cfg(not(target_env = "ohos"))]
 use tokio::{
+    io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt},
+    net::{TcpSocket, TcpStream, UdpSocket},
+    sync::{mpsc::Receiver, Mutex},
+};
+#[cfg(target_env = "ohos")]
+use napi_ohos::tokio::{
     io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt},
     net::{TcpSocket, TcpStream, UdpSocket},
     sync::{mpsc::Receiver, Mutex},
@@ -167,7 +174,10 @@ where
         None => None,
         Some(fd) => {
             use crate::socket_transfer::{reconstruct_socket, reconstruct_transfer_socket, request_sockets};
+            #[cfg(not(target_env = "ohos"))]
             use tokio::sync::mpsc::channel;
+            #[cfg(target_env = "ohos")]
+            use napi_ohos::tokio::sync::mpsc::channel;
 
             let fd = reconstruct_socket(fd)?;
             let socket = reconstruct_transfer_socket(fd)?;

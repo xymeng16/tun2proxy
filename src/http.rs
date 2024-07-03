@@ -14,7 +14,10 @@ use std::{
     str,
     sync::Arc,
 };
+#[cfg(not(target_env = "ohos"))]
 use tokio::sync::Mutex;
+#[cfg(target_env = "ohos")]
+use napi_ohos::tokio::sync::Mutex;
 use unicase::UniCase;
 
 #[derive(Eq, PartialEq, Debug)]

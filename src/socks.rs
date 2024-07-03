@@ -6,7 +6,10 @@ use crate::{
 };
 use socks5_impl::protocol::{self, handshake, password_method, Address, AuthMethod, StreamOperation, UserKey, Version};
 use std::{collections::VecDeque, net::SocketAddr, sync::Arc};
+#[cfg(not(target_env = "ohos"))]
 use tokio::sync::Mutex;
+#[cfg(target_env = "ohos")]
+use napi_ohos::tokio::sync::Mutex;
 
 #[derive(Eq, PartialEq, Debug)]
 enum SocksState {

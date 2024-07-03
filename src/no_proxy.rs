@@ -4,7 +4,10 @@ use crate::{
     session_info::SessionInfo,
 };
 use std::{collections::VecDeque, net::SocketAddr, sync::Arc};
+#[cfg(not(target_env = "ohos"))]
 use tokio::sync::Mutex;
+#[cfg(target_env = "ohos")]
+use napi_ohos::tokio::sync::Mutex;
 
 struct NoProxyHandler {
     info: SessionInfo,

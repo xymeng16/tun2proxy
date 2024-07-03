@@ -3,7 +3,10 @@ use crate::{
     session_info::SessionInfo,
 };
 use std::{net::SocketAddr, sync::Arc};
+#[cfg(not(target_env = "ohos"))]
 use tokio::sync::Mutex;
+#[cfg(target_env = "ohos")]
+use napi_ohos::tokio::sync::Mutex;
 
 #[async_trait::async_trait]
 pub(crate) trait ProxyHandler: Send + Sync {

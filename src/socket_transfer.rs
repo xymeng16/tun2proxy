@@ -12,7 +12,10 @@ use std::{
     ops::DerefMut,
     os::fd::{AsFd, AsRawFd, FromRawFd, IntoRawFd, OwnedFd, RawFd},
 };
+#[cfg(not(target_env = "ohos"))]
 use tokio::net::{TcpSocket, UdpSocket, UnixDatagram};
+#[cfg(target_env = "ohos")]
+use napi_ohos::tokio::net::{TcpSocket, UdpSocket, UnixDatagram};
 
 const REQUEST_BUFFER_SIZE: usize = 64;
 
