@@ -10,6 +10,7 @@ use std::{collections::VecDeque, net::SocketAddr, sync::Arc};
 use tokio::sync::Mutex;
 #[cfg(target_env = "ohos")]
 use napi_ohos::tokio::sync::Mutex;
+use ohos_hilog_binding::*;
 
 #[derive(Eq, PartialEq, Debug)]
 enum SocksState {
@@ -139,7 +140,7 @@ impl SocksProxyImpl {
         let response = handshake::Response::retrieve_from_stream(&mut self.server_inbuf.clone());
         if let Err(e) = response {
             if e.kind() == std::io::ErrorKind::UnexpectedEof {
-                log::trace!("receive_server_hello_socks5 needs more data \"{}\"...", e);
+                hilog_debug!(format!("receive_server_hello_socks5 needs more data \"{}\"...", e));
                 return Ok(());
             } else {
                 return Err(e);
@@ -184,7 +185,7 @@ impl SocksProxyImpl {
         let response = Response::retrieve_from_stream(&mut self.server_inbuf.clone());
         if let Err(e) = response {
             if e.kind() == std::io::ErrorKind::UnexpectedEof {
-                log::trace!("receive_auth_data needs more data \"{}\"...", e);
+                hilog_debug!(format!("receive_auth_data needs more data \"{}\"...", e));
                 return Ok(());
             } else {
                 return Err(e);
@@ -216,7 +217,7 @@ impl SocksProxyImpl {
         let response = protocol::Response::retrieve_from_stream(&mut self.server_inbuf.clone());
         if let Err(e) = response {
             if e.kind() == std::io::ErrorKind::UnexpectedEof {
-                log::trace!("receive_connection_status needs more data \"{}\"...", e);
+                hilog_debug!(format!("receive_connection_status needs more data \"{}\"...", e));
                 return Ok(());
             } else {
                 return Err(e);
