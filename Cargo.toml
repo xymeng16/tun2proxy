@@ -39,7 +39,7 @@ udp-stream = { version = "0.0.12", default-features = false }
 unicase = "2"
 url = "2"
 napi-derive-ohos = { version = "1.0.0-beta.2", features = ["full"] }
-napi-ohos = {  version = "1.0.0-beta.2", features = ["full"] }
+napi-ohos = {  version = "1.0.0-beta.2", features = ["full", "tokio_full"] }
 ohos-hilog-binding = "0.0.3"
 
 [target.'cfg(target_os="linux")'.dependencies]
