@@ -250,7 +250,7 @@ where
         match ip_stack_stream {
             IpStackStream::Tcp(tcp) => {
                 if TASK_COUNT.load(Relaxed) > MAX_SESSIONS {
-                    hilog_warn!("Too many sessions that over {MAX_SESSIONS}, dropping new session");
+                    hilog_warn!(format!("Too many sessions that over {}, dropping new session", MAX_SESSIONS));
                     continue;
                 }
                 hilog_debug!(format!("Session count {}", TASK_COUNT.fetch_add(1, Relaxed) + 1));
@@ -273,7 +273,7 @@ where
             }
             IpStackStream::Udp(udp) => {
                 if TASK_COUNT.load(Relaxed) > MAX_SESSIONS {
-                    hilog_warn!("Too many sessions that over {MAX_SESSIONS}, dropping new session");
+                    hilog_warn!(format!("Too many sessions that over {}, dropping new session", MAX_SESSIONS));
                     continue;
                 }
                 hilog_debug!(format!("Session count {}", TASK_COUNT.fetch_add(1, Relaxed) + 1));
