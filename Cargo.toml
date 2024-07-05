@@ -34,18 +34,20 @@ tokio = { version = "1", features = ["full"] }
 tokio-util = "0.7"
 tproxy-config = { version = "6" }
 trust-dns-proto = "0.23"
-tun2 = { version = "2", features = ["async"] }
+# tun2 = { version = "2", features = ["async"] }
 udp-stream = { version = "0.0.12", default-features = false }
 unicase = "2"
 url = "2"
-napi-derive-ohos = { version = "1.0.0-beta.2", features = ["full"] }
-napi-ohos = {  version = "1.0.0-beta.2", features = ["full", "tokio_full"] }
+napi-derive-ohos = { version = "1.0.0-beta.3" }
+napi-ohos = {  version = "1.0.0-beta.3", features = ["tokio_full"] }
 ohos-hilog-binding = "0.0.3"
+
+tun2 = { path = "../rust-tun/", features = ["async"] }
 
 [target.'cfg(target_os="linux")'.dependencies]
 serde = { version = "1", features = ["derive"] }
 bincode = "1"
-nix = { version = "0", default-features = false, features = [
+nix = { path = "../nix/", default-features = false, features = [
     "fs",
     "socket",
     "uio",
